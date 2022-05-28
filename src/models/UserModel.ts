@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { Schema, model } from 'mongoose';
+import toJson from '@meanie/mongoose-to-json';
 
 const UserSchema = new Schema({
 	'firstName': String,
@@ -23,8 +24,10 @@ const UserSchema = new Schema({
 	'createdAt': {
 		type: Date,
 		default: Date
-	}
-});
+	},
+	hash: String,
+	salt: String,
+}).plugin(toJson);
 
 UserSchema.methods.setPassword = function (password) {
 	this.salt = crypto.randomBytes(16).toString("hex");
@@ -48,15 +51,28 @@ UserSchema.methods.generateJwt = function () {
 		{
 			id: this._id,
 			role: this.role || undefined,
-			fname: this.fname,
-			permissions: this.permissions || undefined,
-			merchant: this.merchant || undefined
+			firstName: this.firstName,
+			lastName: this.lastName,
 		},
 		process.env.SECRET,
 		{
 			expiresIn: Math.round(expiry.getTime() / 1000),
 		}
 	);
+};
+UserSchema.methods.profile = function () {
+	return {
+		id: this.id,
+		firstName: this.firstName,
+		lastName: this.lastName,
+		email: this.email,
+		countryCode: this.countryCode,
+		phone: this.phone,
+		role: this.role,
+		verified: this.verified,
+		active: this.active,
+		createdAt: this.createdAt,
+	}
 };
 
 export = model('User', UserSchema);

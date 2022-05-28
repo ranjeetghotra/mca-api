@@ -13,14 +13,16 @@ export = {
     login: async function (req, res) {
 
         try {
-            let user = await UserModel.findOne({ phone: req.body.phone })
+            let user = await UserModel.findOne({ email: req.body.email })
             if(!user?.verified) {
                 return res.status(400).json({ message: 'User not verified', errors: [] })
             } else if(!user?.active) {
                 return res.status(400).json({ message: 'User not active', errors: [] })
+            } else if (req.params.type === 'admin' && user.role !==2) {
+                return res.status(400).json({ message: 'User don\'t have admin permission', errors: [] })
             } else if (!!user || user.validPassword(req.body.password)) {
                 const token = user.generateJwt();
-                return res.status(201).json({ code: 201, token, data: user, message: 'Signup successful', errors: [] })
+                return res.status(201).json({ code: 201, token, data: user.profile(), message: 'Signup successful', errors: [] })
             }
             return res.status(400).json({ message: 'User not found', errors: [] })
         } catch (err) {
@@ -56,7 +58,7 @@ export = {
             const token = user.generateJwt();
 
             // messageService.sendWelcomeSMS('+91' + user.phone);
-            return res.status(201).json({ code: 201, token, data: user, message: 'Signup successful', errors: [] })
+            return res.status(201).json({ code: 201, data: user.profile(), message: 'Signup successful', errors: [] })
         } catch (err) {
             return res.status(400).json({ message: 'Registration Failed', errors: [err.message] })
         }

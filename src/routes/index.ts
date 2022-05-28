@@ -1,11 +1,11 @@
 import express from 'express';
-import UserRoutes from './UserRoutes';
 import AuthRoutes from './AuthRoutes';
+import AdminRoutes from './Admin';
 
 const router = express.Router()
 
 router.use('/auth', AuthRoutes)
-router.use('/users', UserRoutes)
+router.use('/', AdminRoutes)
 
 router.get('/', (req, res) => {
     res.send('App working ⚡️');
