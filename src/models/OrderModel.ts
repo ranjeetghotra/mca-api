@@ -15,22 +15,24 @@ const OrderSchema = new Schema({
 		ref: 'Address'
 	},
 	'products': {
-		type: {
+		type: [{
 			product: {
 				type: Schema.Types.ObjectId,
 				ref: 'Product'
 			},
 			price: Number,
 			quantity: Number
-		}
+		}]
 	},
 	'shipping': Number,
 	'subTotal': Number,
+	'payment': {
+		type: String
+	},
 	'status': {
 		type: String,
-		default: 'Created'
+		default: 'Pending'
 	},
-	'discount': Number,
 	'createdAt': {
 		type: Date,
 		default: Date

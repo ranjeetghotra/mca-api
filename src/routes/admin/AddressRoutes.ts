@@ -1,6 +1,6 @@
 import * as express from 'express';
 const router = express.Router();
-import AddressController from '../controllers/AddressController';
+import AddressController from '../../controllers/AddressController';
 
 /*
  * GET

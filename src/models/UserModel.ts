@@ -54,7 +54,7 @@ UserSchema.methods.generateJwt = function () {
 			firstName: this.firstName,
 			lastName: this.lastName,
 		},
-		process.env.SECRET,
+		process.env.JWT_SECRET,
 		{
 			expiresIn: Math.round(expiry.getTime() / 1000),
 		}

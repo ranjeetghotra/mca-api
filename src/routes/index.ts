@@ -1,11 +1,16 @@
 import express from 'express';
 import AuthRoutes from './AuthRoutes';
-import AdminRoutes from './Admin';
+import AdminRoutes from './admin';
+import UserRoutes from './user';
+import PublicRoutes from './public';
+import Auth from '../middleware/auth';
 
 const router = express.Router()
 
 router.use('/auth', AuthRoutes)
-router.use('/', AdminRoutes)
+router.use('/', PublicRoutes)
+router.use('/', Auth.userAuthJWT, UserRoutes)
+router.use('/', Auth.adminAuthJWT, AdminRoutes)
 
 router.get('/', (req, res) => {
     res.send('App working ⚡️');
