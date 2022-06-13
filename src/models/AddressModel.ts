@@ -7,6 +7,8 @@ const AddressSchema = new Schema({
 	 	type: Schema.Types.ObjectId,
 	 	ref: 'User'
 	},
+	'name' : String,
+	'phone' : String,
 	'address' : String,
 	'street' : String,
 	'locality' : String,
