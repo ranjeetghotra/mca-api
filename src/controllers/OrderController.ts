@@ -118,7 +118,6 @@ export = {
             }
             return res.status(201).json({ data })
         } catch (err) {
-            console.log(err)
             return res.status(500).json({
                 message: 'Error when Order Payment',
                 error: err.message || JSON.stringify(err)

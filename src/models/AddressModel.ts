@@ -15,7 +15,7 @@ const AddressSchema = new Schema({
 	'pincode' : String,
 	'deleted' : {
 		type: Boolean,
-		default: false
+		default: false,
 	},
 	'createdAt': {
 		type: Date,

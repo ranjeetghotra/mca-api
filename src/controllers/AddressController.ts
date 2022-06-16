@@ -11,7 +11,7 @@ export = {
      * AddressController.list()
      */
     list: function (req, res) {
-        AddressModel.find((err, Addresss) => {
+        AddressModel.find({ user: req.user.id, deleted: { $ne: true } }, (err, data) => {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting Address.',
@@ -19,7 +19,7 @@ export = {
                 });
             }
 
-            return res.json(Addresss);
+            return res.json({ data });
         });
     },
 
@@ -29,7 +29,7 @@ export = {
     show: function (req, res) {
         const id = req.params.id;
 
-        AddressModel.findOne({_id: id}, (err, Address) => {
+        AddressModel.findOne({ _id: id, user: req.user.id, deleted: { $ne: true } }, (err, Address) => {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting Address.',
@@ -52,15 +52,16 @@ export = {
      */
     create: function (req, res) {
         const Address = new AddressModel({
-			user : req.body.user,
-			address : req.body.address,
-			street : req.body.street,
-			locality : req.body.locality,
-			pincode : req.body.pincode,
-			deleted : req.body.deleted
+            user: req.user.id,
+            address: req.body.address,
+            name: req.body.name,
+            street: req.body.street,
+            locality: req.body.locality,
+            pincode: req.body.pincode,
+            phone: req.body.phone,
         });
 
-        Address.save((err, Address) => {
+        Address.save((err, address) => {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when creating Address',
@@ -68,7 +69,7 @@ export = {
                 });
             }
 
-            return res.status(201).json(Address);
+            return res.status(201).json(address);
         });
     },
 
@@ -78,7 +79,7 @@ export = {
     update: function (req, res) {
         const id = req.params.id;
 
-        AddressModel.findOne({_id: id}, (err, Address) => {
+        AddressModel.findOne({ _id: id }, (err, Address) => {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting Address',
@@ -91,14 +92,13 @@ export = {
                     message: 'No such Address'
                 });
             }
+            Address.address = req.body.address ? req.body.address : Address.address;
+            Address.name = req.body.name ? req.body.name : Address.name;
+            Address.street = req.body.street ? req.body.street : Address.street;
+            Address.locality = req.body.locality ? req.body.locality : Address.locality;
+            Address.pincode = req.body.pincode ? req.body.pincode : Address.pincode;
+            Address.phone = req.body.phone ? req.body.phone : Address.phone;
 
-            Address.user = req.body.user ? req.body.user : Address.user;
-			Address.address = req.body.address ? req.body.address : Address.address;
-			Address.street = req.body.street ? req.body.street : Address.street;
-			Address.locality = req.body.locality ? req.body.locality : Address.locality;
-			Address.pincode = req.body.pincode ? req.body.pincode : Address.pincode;
-			Address.deleted = req.body.deleted ? req.body.deleted : Address.deleted;
-			
             Address.save((err, Address) => {
                 if (err) {
                     return res.status(500).json({
@@ -115,18 +115,21 @@ export = {
     /**
      * AddressController.remove()
      */
-    remove: function (req, res) {
+    remove: async (req, res) => {
         const id = req.params.id;
-
-        AddressModel.findByIdAndRemove(id, (err, Address) => {
-            if (err) {
-                return res.status(500).json({
-                    message: 'Error when deleting the Address.',
-                    error: err
-                });
+        try {
+            const address = await AddressModel.findOne({ _id: id })
+            if (!address) {
+                throw Error("Address not found")
             }
-
-            return res.status(204).json();
-        });
+            address.deleted = true;
+            await address.save()
+            res.send({})
+        } catch (err) {
+            return res.status(500).json({
+                message: 'Error when deleting the Address.',
+                error: err.message || JSON.stringify(err)
+            });
+        }
     }
 };
