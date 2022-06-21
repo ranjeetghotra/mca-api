@@ -30,8 +30,8 @@ const OrderSchema = new Schema({
 		type: String
 	},
 	'status': {
-		type: String,
-		default: 'Pending'
+		type: Number,
+		default: 1
 	},
 	'createdAt': {
 		type: Date,

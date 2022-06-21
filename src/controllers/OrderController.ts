@@ -38,25 +38,15 @@ export = {
     /**
      * OrderController.show()
      */
-    show: function (req, res) {
-        const id = req.params.id;
-
-        OrderModel.findOne({ _id: id, user: req.user.id }, (err, Order) => {
-            if (err) {
-                return res.status(500).json({
-                    message: 'Error when getting Order.',
-                    error: err
-                });
-            }
-
-            if (!Order) {
-                return res.status(404).json({
-                    message: 'No such Order'
-                });
-            }
-
-            return res.json({ data: Order });
-        });
+    show: async (req, res) => {
+        try {
+            const id = req.params.id
+            const order = await OrderModel.findOne({ _id: id, user: req.user.id }).populate('products.product')
+            return res.json({ data: order })
+        }
+        catch (err) {
+            res.status(400).send({ message: 'Error when getting Order.', errors: [err] })
+        }
     },
 
     /**
@@ -106,10 +96,10 @@ export = {
         try {
             const paymentId = req.body.razorpay_payment_id
             const order = await OrderModel.findById(req.body.receipt)
-            const payment = await instance.payments.capture(paymentId, order.subTotal * 100)
+            const payment = await instance.payments.capture(paymentId, (order.subTotal + order.shipping) * 100)
             if (payment.captured) {
                 order.payment = payment.id
-                order.status = 'Created'
+                order.status = 2
                 await order.save()
             }
             const data = {
