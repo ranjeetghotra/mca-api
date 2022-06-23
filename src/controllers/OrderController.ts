@@ -41,7 +41,7 @@ export = {
     show: async (req, res) => {
         try {
             const id = req.params.id
-            const order = await OrderModel.findOne({ _id: id, user: req.user.id }).populate('products.product')
+            const order = await OrderModel.findOne({ _id: id, user: req.user.id }).populate('products.product').populate('address')
             return res.json({ data: order })
         }
         catch (err) {
