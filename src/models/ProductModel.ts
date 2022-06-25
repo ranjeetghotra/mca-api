@@ -15,6 +15,8 @@ const ProductSchema = new Schema({
 		default: true
 	},
 	'description': String,
+	'unitValue': Number,
+	'unitType': String,
 	'images': Array,
 	'createdAt': {
 		type: Date,

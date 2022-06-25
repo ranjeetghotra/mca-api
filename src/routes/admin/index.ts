@@ -7,7 +7,7 @@ import OrderRoutes from './OrderRoutes';
 
 const router = express.Router()
 
-router.use('/users', UserRoutes)
+router.use('/user', UserRoutes)
 router.use('/category', CategoryRoutes)
 router.use('/product', ProductRoutes)
 router.use('/file', FileRoutes)

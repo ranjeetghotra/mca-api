@@ -67,17 +67,22 @@ export = {
     /**
      * UserController.list()
      */
-    list: function (req, res) {
-        UserModel.find((err, Users) => {
-            if (err) {
-                return res.status(500).json({
-                    message: 'Error when getting User.',
-                    error: err
-                });
-            }
-
-            return res.json(Users);
-        });
+    list: async (req, res) => {
+        try {
+            const query = req.query
+            const page = +query.page || 1
+            const limit = +query.limit || 10
+            const sliceStart = (page - 1) * limit
+            const sliceEnd = sliceStart + limit
+            const orders = await UserModel.find({ user: req.user.id })
+            res.send({
+                count: orders.length,
+                data: orders.slice(sliceStart, sliceEnd),
+                page, limit
+            })
+        } catch (err) {
+            res.status(400).send({ message: 'Error when getting Users.', errors: [err] })
+        }
     },
 
     /**

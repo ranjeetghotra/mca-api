@@ -63,6 +63,8 @@ export = {
             discountPrice: req.body.discountPrice,
             active: req.body.active,
             description: req.body.description,
+            unitValue: req.body.unitValue,
+            unitType: req.body.unitType,
             images: req.body.images
         });
 
@@ -104,6 +106,8 @@ export = {
             Product.discountPrice = req.body.discountPrice ? req.body.discountPrice : Product.discountPrice;
             Product.active = req.body.active !== undefined ? req.body.active : Product.active;
             Product.description = req.body.description ? req.body.description : Product.description;
+            Product.unitValue = req.body.unitValue ? req.body.unitValue : Product.unitValue;
+            Product.unitType = req.body.unitType ? req.body.unitType : Product.unitType;
             Product.images = req.body.images ? req.body.images : Product.images;
 
             Product.save((err, Product) => {
