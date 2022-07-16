@@ -17,7 +17,15 @@ export = {
             const limit = +query.limit || 10
             const sliceStart = (page - 1) * limit
             const sliceEnd = sliceStart + limit
-            const products = await ProductModel.find()
+
+            let filter = {}
+            if (query.category) {
+                filter['category'] = query.category
+            }
+            if (query?.q) {
+                filter["name"] = { "$regex": query.q, "$options": "i" }
+            }
+            const products = await ProductModel.find(filter)
             res.send({
                 count: products.length,
                 data: products.slice(sliceStart, sliceEnd),

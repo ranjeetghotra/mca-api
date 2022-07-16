@@ -15,7 +15,7 @@ const UserSchema = new Schema({
 	},
 	'verified': {
 		type: Boolean,
-		default: false
+		default: true
 	},
 	'active': {
 		type: Boolean,

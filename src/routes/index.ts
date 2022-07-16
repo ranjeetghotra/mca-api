@@ -8,7 +8,7 @@ import Auth from '../middleware/auth';
 const router = express.Router()
 
 router.use('/auth', AuthRoutes)
-router.use('/', PublicRoutes)
+router.use('/', Auth.publicJWT, PublicRoutes)
 router.use('/', Auth.userAuthJWT, UserRoutes)
 router.use('/', Auth.adminAuthJWT, AdminRoutes)
 

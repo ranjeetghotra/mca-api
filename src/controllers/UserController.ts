@@ -58,7 +58,7 @@ export = {
             const token = user.generateJwt();
 
             // messageService.sendWelcomeSMS('+91' + user.phone);
-            return res.status(201).json({ code: 201, data: user.profile(), message: 'Signup successful', errors: [] })
+            return res.status(201).json({ code: 201, token, data: user.profile(), message: 'Signup successful', errors: [] })
         } catch (err) {
             return res.status(400).json({ message: 'Registration Failed', errors: [err.message] })
         }
@@ -74,7 +74,7 @@ export = {
             const limit = +query.limit || 10
             const sliceStart = (page - 1) * limit
             const sliceEnd = sliceStart + limit
-            const orders = await UserModel.find({ user: req.user.id })
+            const orders = await UserModel.find()
             res.send({
                 count: orders.length,
                 data: orders.slice(sliceStart, sliceEnd),

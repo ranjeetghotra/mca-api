@@ -1,6 +1,16 @@
 import jwt from "jsonwebtoken";
 
 export = {
+    publicJWT: async (req, res, next) => {
+        try {
+            const authHeader = req.headers.authorization
+            const user = await decodeJWT(authHeader)
+            req.user = user
+            next()
+        } catch (err) {
+            next()
+        }
+    },
     userAuthJWT: async (req, res, next) => {
         try {
             const authHeader = req.headers.authorization

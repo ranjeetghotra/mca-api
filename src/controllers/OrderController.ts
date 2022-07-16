@@ -24,7 +24,8 @@ export = {
             const limit = +query.limit || 10
             const sliceStart = (page - 1) * limit
             const sliceEnd = sliceStart + limit
-            const orders = await OrderModel.find({ user: req.user.id }).sort({ createdAt: 'desc' })
+            const filter = req.user.role !== 2 ? { user: req.user.id } : {}
+            const orders = await OrderModel.find(filter).sort({ createdAt: 'desc' })
             res.send({
                 count: orders.length,
                 data: orders.slice(sliceStart, sliceEnd),
