@@ -1,4 +1,5 @@
 import ContactModel from '../models/ContactModel';
+import MailService from '../services/MailService';
 
 /**
  * ContactController.ts
@@ -17,10 +18,10 @@ export = {
             const limit = +query.limit || 10
             const sliceStart = (page - 1) * limit
             const sliceEnd = sliceStart + limit
-            const orders = await ContactModel.find().sort({ createdAt: 'desc' })
+            const contacts = await ContactModel.find().sort({ createdAt: 'desc' })
             res.send({
-                count: orders.length,
-                data: orders.slice(sliceStart, sliceEnd),
+                count: contacts.length,
+                data: contacts.slice(sliceStart, sliceEnd),
                 page, limit
             })
         } catch (err) {
@@ -63,6 +64,12 @@ export = {
 			subject : req.body.subject,
 			message : req.body.message
         });
+
+        MailService.sendMail({
+            to: Contact.email,
+            subject: 'Thanks for Contact',
+            text: 'We will contact you back shortly, Thank you for your patience'
+        })
 
         Contact.save((err, Contact) => {
             if (err) {

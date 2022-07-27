@@ -1,6 +1,8 @@
 import OrderModel from '../models/OrderModel';
 import ProductModel from '../models/ProductModel';
 import Razorpay from 'razorpay';
+import MailService from '../services/MailService';
+import UserModel from '../models/UserModel';
 
 const instance = new Razorpay({
     key_id: process.env.RAZORPAY_ID,
@@ -107,6 +109,12 @@ export = {
                 orderId: order.id,
                 paymentId
             }
+            const user = await UserModel.findById(order.user)
+            MailService.sendMail({
+                to: user.email,
+                subject: 'Thanks for Shopping',
+                text: `Payment of your order ${order.orderId} has been received`
+            })
             return res.status(201).json({ data })
         } catch (err) {
             return res.status(500).json({

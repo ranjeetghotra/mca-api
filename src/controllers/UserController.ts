@@ -1,4 +1,5 @@
 import UserModel from '../models/UserModel';
+import MailService from '../services/MailService';
 
 /**
  * UserController.ts
@@ -55,7 +56,12 @@ export = {
             let user = new UserModel(data);
             user.setPassword(req.body.password)
             user = await user.save();
-            const token = user.generateJwt();
+            const token = user.generateJwt();            
+            MailService.sendMail({
+                to: user.email,
+                subject: 'Grocer Signup',
+                text: `Thank you for signup`
+            })
 
             // messageService.sendWelcomeSMS('+91' + user.phone);
             return res.status(201).json({ code: 201, token, data: user.profile(), message: 'Signup successful', errors: [] })
